@@ -20,6 +20,28 @@ h2. The layout
 
 Each page is rendered into a "HAML":http://haml-lang.com layout file. The parts of the page and a set of variables are provided by the page itself and a global content file. The layout file should be located next to the rackup file @config.ru@ and defaults to @layout.haml@. The layout file is configurable via @page_vars[:layout]@ and @global_vars[:layout]@.
 
+A minimal @layout.haml@ could look like this:
+
+<pre><code>!!!
+%html{:lang => "de"}
+  %head
+    %meta{:charset => "utf-8"}
+    %title= page_vars[:title] || global_vars[:title]
+    %link{:href => "/stylesheets/styles.css"}
+  %body
+    %header
+    %h1 Some title
+    %nav
+      = global_parts['navigation']
+    %aside
+      = page_parts['sidebar']
+    %section
+      = page_parts['body']
+    %footer
+</code></pre>
+
+Note the use of @page_vars[:title]@, @global_vars[:title]@, @global_parts['navigation']@, @page_parts['sidebar']@ and @page_parts['body']@. These variables are defined via...
+
 h2. The page content files
 
 ... basically look like this:
@@ -97,7 +119,7 @@ run TinySite.new :cache_buster => 'preview',
 
 h2. Caching
 
-TinySite adds HTTP caching headers to support Herokus Varnish cache. In addition to that fetched textile files are cached in-app for up to an hour. You can bust the cache by adding a configurable cache-busting query string. By default it's @bust@, so you would just add it to the URL like this: http://foo/bar?bust. In addition to clear the internal cache adds a cache-control header to prevent caching in any HTTP cache between you and the app.
+TinySite adds HTTP caching headers to support Herokus Varnish cache. In addition to that fetched textile files are cached in-app for up to an hour. You can bust the cache by adding a configurable cache-busting query string. By default it's @bust@, so you would just add it to the URL like this: @http://foo/bar?bust@. In addition to clear the internal cache adds a cache-control header to prevent caching in any HTTP cache between you and the app.
 
 You can use the cache buster to make changes to the page immediately visible for you to review them (and still others will most likely get the old version for quite some time). I couldn't figure out a possibility to expire Herokus Varnish cache on demand, so at the moment you have no control over when exactly changes made are visible. So it could take up to two hours (one for the internal content file cache and one for the external HTTP cache).
 

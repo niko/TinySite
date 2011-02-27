@@ -8,8 +8,8 @@ Gem::Specification.new do |s|
   s.version      = TinySite::VERSION
   s.authors      = ["Niko Dittmann"]
   s.email        = "mail+git@niko-dittmann.com"
-  s.homepage     = "http://github.com/niko/tiny_site"
-  s.summary      = "A static small site engine with Heroku and DropBox in mind"
+  s.homepage     = "https://github.com/niko/TinySite"
+  s.summary      = "A small static site engine with Heroku and DropBox in mind"
   s.description  = s.summary
 
   s.files        = Dir['lib/**/*.rb']

@@ -9,8 +9,8 @@ Gem::Specification.new do |s|
   s.authors      = ["Niko Dittmann"]
   s.email        = "mail+git@niko-dittmann.com"
   s.homepage     = "http://github.com/niko/tiny_site"
-  s.summary      = "[summary]"
-  s.description  = "[description]"
+  s.summary      = "A static small site engine with Heroku and DropBox in mind"
+  s.description  = s.summary
 
   s.files        = Dir['lib/**/*.rb']
   s.platform     = Gem::Platform::RUBY

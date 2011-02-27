@@ -1,1 +1,105 @@
 h1. TinySite
+
+TinySite is a static site engine with "Heroku":http://heroku.com and "DropBox":http://www.dropbox.com/ in mind. The idea is to host the app for a site on Heroku and take advantage of their awesome application stack and provide the static content by DropBox.
+
+Of course TinySite will work at any other "Ruby":http://www.ruby-lang.org hoster as well and is easy to be self hosted (it's just "Rack":http://rack.rubyforge.org). And of course any other HTTP server or even local files will work for the content.
+
+With the Heroku/DropBox combination TinySite provides:
+
+* Easy local editing of "YAML":http://en.wikipedia.org/wiki/YAML & "Textile":http://en.wikipedia.org/wiki/Textile_(markup_language) based page content files.
+* Versioning of page content files.
+* Give other people access to edit all pages or just some (via DropBox folder sharing).
+* Easy drag and drop image (and other asset) upload.
+* Edit page form your iPhone or Android phone (via DropBox edit app).
+* An own Heroku subdomain (and it's cheap to register an own domain for it).
+* Take full advantage of Herokus caching infrastructure.
+
+So how does it work?
+
+h2. The layout
+
+Each page is rendered into a "HAML"http://haml-lang.com layout file. The parts of the page and a set of variables are provided by the page itself and a global content file. The layout file should be located next to the rackup file @config.ru@ and defaults to @layout.haml@. The layout file is configurable via @:layout@ @page_vars@ and @global_vars@.
+
+h2. The page content files
+
+... basically look like this:
+
+<pre><code>
+---
+:title: My Page
+:description: It's uber-awesome!
+
+++++sidebar++++
+
+!some.png!
+
+Orem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+
+++++body++++
+
+h1. Hey, Dude!
+
+Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+</code></pre>
+
+This gives the layout access to these variables: @page_vars[:title]@, @page_vars[:description]@, @page_parts['sidebar']@ and @page_parts['body']@.
+
+Analog the the page_vars and page_parts the global_vars and global_parts are set via the content of the @__global.textile@ file. A typical one would perhaps look like this:
+
+<pre><code>
+---
+:keywords: bla, blub, ...
+
+++++navigation++++
+
+* "Home":/
+* "One":one
+</code>
+
+With this in place the layout has access to these variables: @global_vars[:keywords]@ and @global_parts['navigation']@. The @__global@ file would be the place to add a footer, too.
+
+The filenames derive directly from the path. Subfolders are supported. With the above navigation in place you would need an @index.textile@ file and a @one.textile@ file next to your @__global.textile@ file.
+
+h2. The app itself
+
+The app itself is really, really simple. All you need to get started is a @config.ru@ file:
+
+<pre><code>
+require 'tiny_site'
+
+use Rack::ContentLength
+
+run TinySite.new :file_path => 'http://dl.dropbox.com/u/[user_id]/my_site'
+</code></pre>
+
+The file path would be the folder in which the page content files are available. Other supported parameters are @:image_path@ (defaults to @[file_path]/images@) and @cache_buster@ (a query string with which you can bust the internal cache and prevent HTTP caching for the given site).
+
+Of course you will want to serve some assets, too. Give this files and folders:
+
+<pre><code>
+config.ru
+layout.haml
+public/
+  javascript/
+    my.js
+  stylesheets/
+    my.css
+</code></pre>
+
+In this case the @config.ru@ will more look like this:
+
+<pre><code>
+require 'tiny_site'
+
+use Rack::CommonLogger
+use Rack::ContentLength
+use Rack::Static, :urls => ['/stylesheets','/javascript'], :root => 'public'
+
+run TinySite.new :cache_buster => 'preview',
+                       :file_path => 'http://dl.dropbox.com/u/1343338/a_test',
+                       :image_path => 'http://dl.dropbox.com/u/1343338/a_test/images'
+</code></pre>
+
+h2. Current state of TinySite
+
+TinySite is currently alpha software. Patches and Bugreports are welcome. Detailed installation instructions will follow.

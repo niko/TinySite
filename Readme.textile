@@ -95,6 +95,14 @@ run TinySite.new :cache_buster => 'preview',
                  :image_path => 'http://dl.dropbox.com/u/1343338/a_test/images'
 </code></pre>
 
+h2. Caching
+
+TinySite adds HTTP caching headers to support Herokus Varnish cache. In addition to that fetched textile files are cached in-app for up to an hour. You can bust the cache by adding a configurable cache-busting query string. By default it's @bust@, so you would just add it to the URL like this: http://foo/bar?bust. In addition to clear the internal cache adds a cache-control header to prevent caching in any HTTP cache between you and the app.
+
+You can use the cache buster to make changes to the page immediately visible for you to review them (and still others will most likely get the old version for quite some time). I couldn't figure out a possibility to expire Herokus Varnish cache on demand, so at the moment you have no control over when exactly changes made are visible. So it could take up to two hours (one for the internal content file cache and one for the external HTTP cache).
+
+It would be a good idea to choose an own cache buster query string and keep it somewhat secret so other people can't fiddle with your apps cache.
+
 h2. Current state of TinySite
 
 TinySite is currently alpha software. Patches and Bugreports are welcome. Detailed installation instructions will follow.

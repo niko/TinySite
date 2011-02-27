@@ -18,14 +18,13 @@ So how does it work?
 
 h2. The layout
 
-Each page is rendered into a "HAML"http://haml-lang.com layout file. The parts of the page and a set of variables are provided by the page itself and a global content file. The layout file should be located next to the rackup file @config.ru@ and defaults to @layout.haml@. The layout file is configurable via @:layout@ @page_vars@ and @global_vars@.
+Each page is rendered into a "HAML"http://haml-lang.com layout file. The parts of the page and a set of variables are provided by the page itself and a global content file. The layout file should be located next to the rackup file @config.ru@ and defaults to @layout.haml@. The layout file is configurable via @page_vars[:layout]@ and @global_vars[:layout]@.
 
 h2. The page content files
 
 ... basically look like this:
 
-<pre><code>
----
+<pre><code>---
 :title: My Page
 :description: It's uber-awesome!
 
@@ -44,17 +43,16 @@ Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor 
 
 This gives the layout access to these variables: @page_vars[:title]@, @page_vars[:description]@, @page_parts['sidebar']@ and @page_parts['body']@.
 
-Analog the the page_vars and page_parts the global_vars and global_parts are set via the content of the @__global.textile@ file. A typical one would perhaps look like this:
+Analog to the @page_vars@ and @page_parts@ the @global_vars@ and @global_parts@ are set via the content of the @__global.textile@ file. A typical one would perhaps look like this:
 
-<pre><code>
----
+<pre><code>---
 :keywords: bla, blub, ...
 
 ++++navigation++++
 
 * "Home":/
 * "One":one
-</code>
+</code></pre>
 
 With this in place the layout has access to these variables: @global_vars[:keywords]@ and @global_parts['navigation']@. The @__global@ file would be the place to add a footer, too.
 
@@ -64,20 +62,18 @@ h2. The app itself
 
 The app itself is really, really simple. All you need to get started is a @config.ru@ file:
 
-<pre><code>
-require 'tiny_site'
+<pre><code>require 'tiny_site'
 
 use Rack::ContentLength
 
 run TinySite.new :file_path => 'http://dl.dropbox.com/u/[user_id]/my_site'
 </code></pre>
 
-The file path would be the folder in which the page content files are available. Other supported parameters are @:image_path@ (defaults to @[file_path]/images@) and @cache_buster@ (a query string with which you can bust the internal cache and prevent HTTP caching for the given site).
+The file path would be the folder in which the page content files are available. Other supported parameters are @:image_path@ (defaults to @[file_path]/images@) and @cache_buster@ (a query string with which you can bust the internal cache and prevent HTTP caching for the given site). The @:image_path@ helps to keep urls of images in your textile short. Image tags which don't start with 'http://' or '/' will be prefixed by the @:image_path@.
 
 Of course you will want to serve some assets, too. Give this files and folders:
 
-<pre><code>
-config.ru
+<pre><code>config.ru
 layout.haml
 public/
   javascript/
@@ -88,16 +84,15 @@ public/
 
 In this case the @config.ru@ will more look like this:
 
-<pre><code>
-require 'tiny_site'
+<pre><code>require 'tiny_site'
 
 use Rack::CommonLogger
 use Rack::ContentLength
 use Rack::Static, :urls => ['/stylesheets','/javascript'], :root => 'public'
 
 run TinySite.new :cache_buster => 'preview',
-                       :file_path => 'http://dl.dropbox.com/u/1343338/a_test',
-                       :image_path => 'http://dl.dropbox.com/u/1343338/a_test/images'
+                 :file_path => 'http://dl.dropbox.com/u/1343338/a_test',
+                 :image_path => 'http://dl.dropbox.com/u/1343338/a_test/images'
 </code></pre>
 
 h2. Current state of TinySite

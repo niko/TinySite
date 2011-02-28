@@ -17,14 +17,13 @@ h1. header
 EOT
   end
   describe ".parse" do
-    it 'gets the vars' do
-      TextileParts.parse(@t).first.should == {:a => 'bla', :e => 'ble'}
-    end
-    it 'gets the parts and textilizes them' do
-      TextileParts.parse(@t).last['navigation'].should ==
-        %Q{<ul>\n\t<li><a href="eins">one</a></li>\n\t<li><a href="zwei">two</a></li>\n</ul>}
-      TextileParts.parse(@t).last['body'].should ==
-        %Q{<h1>header</h1>}
+    it 'gets the variables' do
+      TextileParts.parse(@t).should == {
+        :a => 'bla',
+        :e => 'ble',
+        'navigation' => %Q{<ul>\n\t<li><a href="eins">one</a></li>\n\t<li><a href="zwei">two</a></li>\n</ul>},
+        'body' => %Q{<h1>header</h1>}
+      }
     end
   end
   describe ".textilize" do
@@ -137,11 +136,11 @@ describe TinySite do
       end
       describe "after parsing" do
         before(:each) do
-          TextileParts.should_receive(:parse).with('some global stuff', 'http://foo/bar/images').and_return([:g_vars, :g_parts])
-          TextileParts.should_receive(:parse).with('some page related stuff', 'http://foo/bar/images').and_return([:p_vars, :p_parts])
+          TextileParts.should_receive(:parse).with('some global stuff', 'http://foo/bar/images').and_return(:global)
+          TextileParts.should_receive(:parse).with('some page related stuff', 'http://foo/bar/images').and_return(:page)
         end
         it 'renders the layout' do
-          @app.should_receive(:render_layout).with({:global_vars=>:g_vars, :global_parts=>:g_parts, :page_vars=>:p_vars, :page_parts=>:p_parts})
+          @app.should_receive(:render_layout).with({:global=>:global, :page =>:page})
           @app.render
         end
       end
@@ -150,22 +149,17 @@ describe TinySite do
   describe "#render_layout" do
     before(:each) do
       @app = TinySite.new :file_path => 'http://foo/bar'
-      @params = {
-        :global_vars=>{},
-        :global_parts=>{},
-        :page_vars=>{},
-        :page_parts=>{}
-      }
+      @params = { :global=>{}, :page=>{} }
       File.stub! :open => StringIO.new('foo')
     end
     describe "determining the layout file" do
       it "uses the page var :layout if given" do
         File.should_receive(:open).with('some_layout.haml').and_return(StringIO.new('foo'))
-        @app.render_layout @params.update(:page_vars => {:layout => 'some_layout'})
+        @app.render_layout @params.update(:page => {:layout => 'some_layout'})
       end
       it "uses the global var :layout if given no page var :layout is given" do
         File.should_receive(:open).with('some_global_layout.haml').and_return(StringIO.new('foo'))
-        @app.render_layout @params.update(:global_vars => {:layout => 'some_global_layout'})
+        @app.render_layout @params.update(:global => {:layout => 'some_global_layout'})
       end
       it "uses the default if no layout given explicitly" do
         File.should_receive(:open).with('layout.haml').and_return(StringIO.new('foo'))

@@ -20,7 +20,7 @@ So how does it work?
 
 h2. The layout
 
-Each page is rendered into a "HAML":http://haml-lang.com layout file. The parts of the page and a set of variables are provided by the page itself and a _global content file_. The layout file should be located next to the rackup file @config.ru@ and defaults to @layout.haml@. The layout file is configurable via @page_vars[:layout]@ and @global_vars[:layout]@.
+Each page is rendered into a "HAML":http://haml-lang.com layout file. The parts of the page and a set of variables are provided by the page itself and a _global content file_. The layout file should be located next to the rackup file @config.ru@ and defaults to @layout.haml@. The layout file is configurable via @page[:layout]@ and @global[:layout]@.
 
 A minimal @layout.haml@ could look like this:
 
@@ -28,21 +28,21 @@ A minimal @layout.haml@ could look like this:
 %html{:lang => "de"}
   %head
     %meta{:charset => "utf-8"}
-    %title= page_vars[:title] || global_vars[:title]
+    %title= page[:title] || global[:title]
     %link{:href => "/stylesheets/styles.css"}
   %body
     %header
     %h1 Some title
     %nav
-      = global_parts['navigation']
+      = global['navigation']
     %aside
-      = page_parts['sidebar']
+      = page['sidebar']
     %section
-      = page_parts['body']
+      = page['body']
     %footer
 </code></pre>
 
-Note the use of @page_vars[:title]@, @global_vars[:title]@, @global_parts['navigation']@, @page_parts['sidebar']@ and @page_parts['body']@. These variables are defined via...
+Note the use of @page[:title]@, @global[:title]@, @global['navigation']@, @page['sidebar']@ and @page['body']@. These variables are defined via...
 
 h2. The _page content files_
 
@@ -65,9 +65,9 @@ h1. Hey, Dude!
 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
 </code></pre>
 
-This gives the layout access to these variables: @page_vars[:title]@, @page_vars[:description]@, @page_parts['sidebar']@ and @page_parts['body']@.
+This gives the layout access to these variables: @page[:title]@, @page[:description]@, @page['sidebar']@ and @page['body']@.
 
-Analog to the @page_vars@ and @page_parts@ the @global_vars@ and @global_parts@ are set via the content of the @__global.textile@ file. A typical one would perhaps look like this:
+Analog to the @page@ variables the @global@ variables are set via the content of the @__global.textile@ file. A typical one would perhaps look like this:
 
 <pre><code>---
 :keywords: bla, blub, ...
@@ -78,7 +78,7 @@ Analog to the @page_vars@ and @page_parts@ the @global_vars@ and @global_parts@ 
 * "One":one
 </code></pre>
 
-With this in place the layout has access to these variables: @global_vars[:keywords]@ and @global_parts['navigation']@. The @__global@ file would be the place to add a footer, too.
+With this in place the layout has access to these variables: @global[:keywords]@ and @global['navigation']@. The @__global@ file would be the place to add a footer, too.
 
 The filenames derive directly from the path. Subfolders are supported. With the above navigation in place you would need an @index.textile@ file and a @one.textile@ file next to your @__global.textile@ file.
 

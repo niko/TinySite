@@ -14,7 +14,7 @@ class TextileParts
     parts = Hash[*parts]
     parts.each{|k,v| parts[k] = textilize(v,image_path)}
     
-    return vars, parts
+    vars.update(parts)
   end
   def self.textilize(string, image_path)
     string.gsub!(%r{!([\w\d\-\._]+)!}){ |a| "!#{image_path}/#{$1}!" }
@@ -87,15 +87,14 @@ class TinySite
             _, page_file    = CachedHttpFile.get remote_file_url_for(@status) if @status != 200
     global_file_fetch_tread.join
     
-    global_vars, global_parts = TextileParts.parse @global_file, @image_path
-    page_vars,   page_parts   = TextileParts.parse page_file,    @image_path
+    global = TextileParts.parse @global_file, @image_path
+    page   = TextileParts.parse page_file,    @image_path
     
-    render_layout :global_vars  => global_vars, :global_parts => global_parts,
-                  :page_vars    => page_vars,   :page_parts   => page_parts
+    render_layout :global => global, :page => page
   end
   
   def render_layout(params)
-    layout = params[:page_vars][:layout] || params[:global_vars][:layout] || 'layout'
+    layout = params[:page][:layout] || params[:global][:layout] || 'layout'
     
     puts "rendering layout '#{layout}'"
     haml = Haml::Engine.new File.open("#{layout}.haml").read, :format => :html5

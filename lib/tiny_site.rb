@@ -5,7 +5,7 @@ require 'haml'
 
 class TextileParts
   def self.parse(tp, image_path='')
-    return [{:title => '404 not found'},{}] unless tp
+    return {:title => '404 not found'} unless tp
     
     vars, *parts = tp.split(/^\+{4}|\+{4}$/)
     

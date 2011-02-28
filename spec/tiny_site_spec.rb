@@ -25,6 +25,9 @@ EOT
         'body' => %Q{<h1>header</h1>}
       }
     end
+    it "returns a 404 title when passed nil" do
+      TextileParts.parse(nil).should == {:title => '404 not found'}
+    end
   end
   describe ".textilize" do
     describe "images relative path" do

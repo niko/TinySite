@@ -129,9 +129,14 @@ It would be a good idea to choose an own cache buster query string and keep it s
 
 h2. ToDo
 
-* Make file ending configurable (choose .txt to allow editing via web based dropbox editors)
 * Make request parameters accessible in the layout
+* Perhaps add a helper for the layout?
 
 h2. Current state of TinySite
 
 TinySite is currently alpha software. Patches and Bugreports are welcome.
+
+h2. Licence
+
+It's MIT licensed. See the License file for details.
+

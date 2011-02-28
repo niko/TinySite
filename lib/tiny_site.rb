@@ -5,10 +5,11 @@ require 'haml'
 
 class TextileParts
   def self.parse(tp, image_path='')
-    vars, *parts =  tp.split(/^\+\+\+\+|\+\+\+\+$/)
+    vars, *parts = tp.split(/^\+{4}|\+{4}$/)
     
     vars = YAML.load(vars) || {}
     parts = Hash[*parts]
+    
     parts.each{|k,v| parts[k] = textilize(v,image_path)}
     
     return vars, parts

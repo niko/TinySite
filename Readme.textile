@@ -20,7 +20,7 @@ So how does it work?
 
 h2. The layout
 
-Each page is rendered into a "HAML":http://haml-lang.com layout file. The parts of the page and a set of variables are provided by the page itself and a global content file. The layout file should be located next to the rackup file @config.ru@ and defaults to @layout.haml@. The layout file is configurable via @page_vars[:layout]@ and @global_vars[:layout]@.
+Each page is rendered into a "HAML":http://haml-lang.com layout file. The parts of the page and a set of variables are provided by the page itself and a _global content file_. The layout file should be located next to the rackup file @config.ru@ and defaults to @layout.haml@. The layout file is configurable via @page_vars[:layout]@ and @global_vars[:layout]@.
 
 A minimal @layout.haml@ could look like this:
 

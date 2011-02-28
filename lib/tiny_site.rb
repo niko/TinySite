@@ -70,14 +70,14 @@ end
 
 class TinySite
   def initialize(opts)
-    @file_path    = opts[:file_path]
-    @file_ending  = opts[:file_ending] || 'textile'
-    @image_path   = opts[:image_path] || File.join(@file_path, 'images')
-    @cache_buster = opts[:cache_buster] || 'bust'
+    @file_path      = opts[:file_path]
+    @file_extension = opts[:file_extension] || 'textile'
+    @image_path     = opts[:image_path] || File.join(@file_path, 'images')
+    @cache_buster   = opts[:cache_buster] || 'bust'
   end
   
   def remote_file_url_for(filename)
-    File.join @file_path, "#{filename}.#{@file_ending}"
+    File.join @file_path, "#{filename}.#{@file_extension}"
   end
   
   def render

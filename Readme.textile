@@ -122,7 +122,7 @@ run TinySite.new :cache_buster => 'preview',
                  :file_extension => :txt
 </code></pre>
 
-The file_extension is configurable if you need to use an editor that doesn't want to edit .textile files. Such as some smartphone dropbox clients which can only edit .txt files. I tried "Droptext for iPhone":http://itunes.apple.com/us/app/droptext-a-text-editor-for/id371880635?mt=8 and it works nicely! .textile can be added to the known extensions.
+The file_extension is configurable if you need to use an editor that doesn't want to edit .textile files. Such as some smartphone dropbox clients which can only edit .txt files or the "TextDrop":http://textdropapp.com/ web client. I tried "Droptext for iPhone":http://itunes.apple.com/us/app/droptext-a-text-editor-for/id371880635?mt=8 and it works nicely! .textile can be added to the known extensions.
 
 h2. Caching
 

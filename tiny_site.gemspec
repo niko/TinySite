@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.authors      = ["Niko Dittmann"]
   s.email        = "mail+git@niko-dittmann.com"
   s.homepage     = "https://github.com/niko/TinySite"
-  s.summary      = "A small static site engine with Heroku and DropBox in mind"
+  s.summary      = "A small static site engine with Heroku and Dropbox in mind"
   s.description  = s.summary
 
   s.files        = Dir['lib/**/*.rb']

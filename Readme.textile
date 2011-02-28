@@ -1,16 +1,16 @@
 h1. TinySite
 
-TinySite is a static small site engine with "Heroku":http://heroku.com and "DropBox":http://www.dropbox.com/ in mind. The idea is to host the app for a site on Heroku and take advantage of their awesome application stack and provide the static content by DropBox.
+TinySite is a static small site engine with "Heroku":http://heroku.com and "Dropbox":http://www.dropbox.com/ in mind. The idea is to host the app for a site on Heroku and take advantage of their awesome application stack and provide the static content by Dropbox.
 
 Of course TinySite will work at any other "Ruby":http://www.ruby-lang.org hoster as well and is easy to be self hosted (it's just "Rack":http://rack.rubyforge.org). And of course any other HTTP server or even local files will work for the content.
 
-With the Heroku/DropBox combination TinySite provides:
+With the Heroku/Dropbox combination TinySite provides:
 
 * Easy local editing of "YAML":http://en.wikipedia.org/wiki/YAML & "Textile":http://en.wikipedia.org/wiki/Textile_(markup_language) based page content files.
 * Versioning of page content files.
-* Give other people access to edit all pages or just some (via DropBox folder sharing).
+* Give other people access to edit all pages or just some (via Dropbox folder sharing).
 * Easy drag and drop image (and other asset) upload.
-* Edit page form your iPhone or Android phone (via DropBox edit app).
+* Edit page form your iPhone or Android phone (via Dropbox edit app).
 * An own Heroku subdomain (and it's cheap to register an own domain for it).
 * Take full advantage of Herokus caching infrastructure.
 

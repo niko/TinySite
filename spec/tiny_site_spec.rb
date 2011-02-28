@@ -143,7 +143,7 @@ describe TinySite do
           TextileParts.should_receive(:parse).with('some page related stuff', 'http://foo/bar/images').and_return(:page)
         end
         it 'renders the layout' do
-          @app.should_receive(:render_layout).with({:global=>:global, :page =>:page})
+          @app.should_receive(:render_layout).with({:global=>:global, :page =>:page, :env=>{:path=>"some/path", :query_string=>nil}})
           @app.render
         end
       end

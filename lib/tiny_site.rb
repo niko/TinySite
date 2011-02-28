@@ -90,7 +90,7 @@ class TinySite
     global = TextileParts.parse @global_file, @image_path
     page   = TextileParts.parse page_file,    @image_path
     
-    render_layout :global => global, :page => page
+    render_layout :global => global, :page => page, :env => {:path => @path, :query_string => @query_string}
   end
   
   def render_layout(params)

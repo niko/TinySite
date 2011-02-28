@@ -82,6 +82,8 @@ With this in place the layout has access to these variables: @global[:keywords]@
 
 The filenames derive directly from the path. Subfolders are supported. With the above navigation in place you would need an @index.textile@ file and a @one.textile@ file next to your @__global.textile@ file.
 
+Besides the @page@ and the @global@ variable the layout hast access to a @env@ hash containing the current path and the current query string: @env[:path]@ and @env[:query_string]@.
+
 h2. The app itself
 
 The app itself is really, really simple. All you need to get started is a @config.ru@ file:
@@ -129,7 +131,6 @@ It would be a good idea to choose an own cache buster query string and keep it s
 
 h2. ToDo
 
-* Make request parameters accessible in the layout
 * Perhaps add a helper for the layout?
 
 h2. Credits

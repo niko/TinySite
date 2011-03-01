@@ -144,7 +144,7 @@ h2. ToDo
 
 h2. Credits
 
-* "Floran Hanke":https://github.com/floere for constant feedback
+* "Florian Hanke":https://github.com/floere for constant feedback
 
 h2. Current state of TinySite
 

@@ -8,7 +8,7 @@ If you like TinySite and don't have a Dropbox account already: Supporting this p
 
 h2. Overview
 
-TinySite itself is a tiny (hence the name) pure Rack application, sporting a mere 200 LOC.
+TinySite itself is a tiny (hence the name) pure Rack application, sporting a mere 130 LOC.
 
 As already stated TinySite was designed with Heroku and Dropbox in mind. But of course TinySite will work at any other "Ruby":http://www.ruby-lang.org hoster as well and is easy to be self hosted (it's just "Rack":http://rack.rubyforge.org). And of course any other HTTP server or even local files will work for the content.
 
@@ -103,7 +103,7 @@ run TinySite.new :file_path => 'http://dl.dropbox.com/u/[user_id]/my_site'
 
 The file path would be the folder in which the _page content files_ are available. Other supported parameters are @:image_path@ (defaults to @[file_path]/images@) and @cache_buster@ (a query string with which you can bust the internal cache and prevent HTTP caching for the given site). The @:image_path@ helps to keep urls of images in your textile short. Image tags which don't start with 'http://' or '/' will be prefixed by the @:image_path@.
 
-Of course you will want to serve some assets, too. Give this files and folders:
+Of course you will want to serve some assets, too. Given this files and folders:
 
 <pre><code>config.ru
 layout.haml

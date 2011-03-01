@@ -4,7 +4,13 @@ TinySite is a static small site engine with "Heroku":http://heroku.com and "Drop
 
 For a guide to get you started immediately have a look at the "TinySite example app repo":https://github.com/niko/TinySite_example_app. The example app may serve you as a blueprint for your own app.
 
-Of course TinySite will work at any other "Ruby":http://www.ruby-lang.org hoster as well and is easy to be self hosted (it's just "Rack":http://rack.rubyforge.org). And of course any other HTTP server or even local files will work for the content.
+If you like TinySite and don't have a Dropbox account already: Supporting this project by using my "affiliate link":http://db.tt/zhjQbKF would be the easiest possibility to give back. And the best part is: When you use the affiliate link not only me, but you too get 250MB extra space on Dropbox.
+
+h2. Overview
+
+TinySite itself is a tiny (hence the name) pure Rack application, sporting a mere 200 LOC.
+
+As already stated TinySite was designed with Heroku and Dropbox in mind. But of course TinySite will work at any other "Ruby":http://www.ruby-lang.org hoster as well and is easy to be self hosted (it's just "Rack":http://rack.rubyforge.org). And of course any other HTTP server or even local files will work for the content.
 
 With the Heroku/Dropbox combination TinySite provides:
 

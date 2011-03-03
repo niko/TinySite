@@ -33,7 +33,7 @@ EOT
     describe "images relative path" do
       it "adds the images path" do
         s = "bla bla !an_image.jpg! blable"
-        TextileParts.textilize(s,'images').should == %Q{<p>bla bla <img src="images/an_image.jpg" alt="" /> blable</p>}
+        TextileParts.textilize(s,'images','?dl=1').should == %Q{<p>bla bla <img src="images/an_image.jpg?dl=1" alt="" /> blable</p>}
       end
     end
     describe "images absolute path" do
@@ -130,23 +130,31 @@ describe TinySite do
         CachedHttpFile.should_receive(:get).with('__global').and_return([200, 'some global stuff'])
       end
       it 'parses the global file' do
-        TextileParts.should_receive(:parse).with('some global stuff', 'http://foo/bar/images')
+        TextileParts.should_receive(:parse).with('some global stuff', 'http://foo/bar/images', '')
         @app.render
       end
       it 'parses the actual page file' do
-        TextileParts.should_receive(:parse).with('some page related stuff', 'http://foo/bar/images')
+        TextileParts.should_receive(:parse).with('some page related stuff', 'http://foo/bar/images', '')
         @app.render
       end
       describe "after parsing" do
         before(:each) do
-          TextileParts.should_receive(:parse).with('some global stuff', 'http://foo/bar/images').and_return(:global)
-          TextileParts.should_receive(:parse).with('some page related stuff', 'http://foo/bar/images').and_return(:page)
+          TextileParts.should_receive(:parse).with('some global stuff', 'http://foo/bar/images', '').and_return(:global)
+          TextileParts.should_receive(:parse).with('some page related stuff', 'http://foo/bar/images', '').and_return(:page)
         end
         it 'renders the layout' do
           @app.should_receive(:render_layout).with({:global=>:global, :page =>:page, :env=>{:path=>"some/path", :query_string=>nil}})
           @app.render
         end
       end
+    end
+  end
+  describe "#remote_file_url_for" do
+    before(:each) do
+      @app = TinySite.new :file_path => 'http://foo/bar', :file_extension => 'ext', :file_path_postfix => '?download'
+    end
+    it "concatenates (more or less) the different path components" do
+      @app.remote_file_url_for('my_file').should == 'http://foo/bar/my_file.ext?download'
     end
   end
   describe "#render_layout" do

@@ -4,20 +4,19 @@ require 'yaml'
 require 'haml'
 
 class TextileParts
-  def self.parse(tp, image_path='')
+  def self.parse(tp, image_path='', file_path_postfix='')
     return {:title => '404 not found'} unless tp
     
     vars, *parts = tp.split(/^\+{4}([\w\d\-_]+)\+{4}$/)
-    
     vars = YAML.load(vars) || {}
     
     parts = Hash[*parts]
-    parts.each{|k,v| parts[k] = textilize(v,image_path)}
+    parts.each{|k,v| parts[k] = textilize(v,image_path,file_path_postfix)}
     
     vars.update(parts)
   end
-  def self.textilize(string, image_path)
-    string.gsub!(%r{!([\w\d\-\._]+)!}){ |a| "!#{image_path}/#{$1}!" }
+  def self.textilize(string, image_path, file_path_postfix='')
+    string.gsub!(%r{!([\w\d\-\._]+)!}){ |a| "!#{image_path}/#{$1}#{file_path_postfix}!" }
     
     RedCloth.new(string).to_html
   end
@@ -70,14 +69,15 @@ end
 
 class TinySite
   def initialize(opts)
-    @file_path      = opts[:file_path]
-    @file_extension = opts[:file_extension] || 'textile'
-    @image_path     = opts[:image_path] || File.join(@file_path, 'images')
-    @cache_buster   = opts[:cache_buster] || 'bust'
+    @file_path         = opts[:file_path]
+    @file_path_postfix = opts[:file_path_postfix] || ''
+    @file_extension    = opts[:file_extension] || 'textile'
+    @image_path        = opts[:image_path] || File.join(@file_path, 'images')
+    @cache_buster      = opts[:cache_buster] || 'bust'
   end
   
   def remote_file_url_for(filename)
-    File.join @file_path, "#{filename}.#{@file_extension}"
+    File.join @file_path, "#{filename}.#{@file_extension}#{@file_path_postfix}"
   end
   
   def render
@@ -87,8 +87,8 @@ class TinySite
             _, page_file    = CachedHttpFile.get remote_file_url_for(@status) if @status != 200
     global_file_fetch_tread.join
     
-    global = TextileParts.parse @global_file, @image_path
-    page   = TextileParts.parse page_file,    @image_path
+    global = TextileParts.parse @global_file, @image_path, @file_path_postfix
+    page   = TextileParts.parse page_file,    @image_path, @file_path_postfix
     
     render_layout :global => global, :page => page, :env => {:path => @path, :query_string => @query_string}
   end

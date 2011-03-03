@@ -7,7 +7,7 @@ class TextileParts
   def self.parse(tp, image_path='')
     return {:title => '404 not found'} unless tp
     
-    vars, *parts = tp.split(/^\+{4}|\+{4}$/)
+    vars, *parts = tp.split(/^\+{4}([\w\d\-_]+)\+{4}$/)
     
     vars = YAML.load(vars) || {}
     

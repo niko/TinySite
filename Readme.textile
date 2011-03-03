@@ -2,6 +2,6 @@ h1. TinySite
 
 TinySite is a static small site engine with "Heroku":http://heroku.com and "Dropbox":http://www.dropbox.com/ in mind. The idea is to host the app for a site on Heroku and take advantage of their awesome application stack and provide the static content by Dropbox.
 
-The complete documentation is at TinySiteDocumentation.heroku.com, for a guide to get you started immediately go directly to the "installation and usage page":http://TinySiteDocumentation.heroku.com/installation_and_usage. The documentation app may serve you as a blueprint for your own app.
+The complete documentation is at tinysite.heroku.com, for a guide to get you started immediately go directly to the "installation and usage page":http://tinysite.heroku.com/installation_and_usage. The documentation app may serve you as a blueprint for your own app.
 
 If you like TinySite and don't have a Dropbox account already: Supporting this project by using my "affiliate link":http://db.tt/zhjQbKF would be the easiest possibility to give back. And the best part is: When you use the affiliate link not only me, but you too get 250MB extra space on Dropbox.

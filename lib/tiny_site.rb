@@ -5,19 +5,24 @@ require 'yaml'
 require 'haml'
 
 class TextileParts
-  def self.parse(tp, image_path='', file_path_postfix='')
+  def self.parse(tp, app)
+    @app = app
+    
     return {:title => '404 not found'} unless tp
     
     vars, *parts = tp.split(/^\+{4}([\w\d\-_]+)\+{4}$/)
     vars = YAML.load(vars) || {}
     
     parts = Hash[*parts]
-    parts.each{|k,v| parts[k] = textilize(v,image_path,file_path_postfix)}
+    parts.each{|k,v| parts[k] = textilize(v)}
     
     vars.update(parts)
   end
-  def self.textilize(string, image_path, file_path_postfix='')
-    string.gsub!(%r{!([\w\d\-\._]+)!}){ |a| "!#{image_path}/#{$1}#{file_path_postfix}!" }
+  def self.image_url_for(img_name)
+    @app.image_url_for img_name
+  end
+  def self.textilize(string)
+    string.gsub!(%r{!([\w\d\-\._]+)!}){ |a| "!#{image_url_for $1}!" }
     
     RedCloth.new(string).to_html
   end
@@ -91,13 +96,13 @@ class TinySite
   
   def global
           _, global_file = CachedHttpFile.get page_content_url_for('__global')
-    TextileParts.parse global_file, image_path, file_path_postfix
+    TextileParts.parse global_file, self
   end
   
   def page
     @status, page_file   = CachedHttpFile.get page_content_url_for(@request_path)
-          _, page_file   = CachedHttpFile.get page_content_url_for(@status)        if @status != 200
-    TextileParts.parse page_file, image_path, file_path_postfix
+          _, page_file   = CachedHttpFile.get page_content_url_for(@status.to_s)        if @status != 200
+    TextileParts.parse page_file, self
   end
   
   def status
@@ -105,10 +110,10 @@ class TinySite
   end
   
   def image_url_for(img_name)
-    file_url_for File.join(@image_path, img_name)
+    file_url_for img_name, @image_path
   end
-  def file_url_for(filename)
-    File.join file_path, "#{filename}#{file_path_postfix}"
+  def file_url_for(filename, path=file_path)
+    File.join path, "#{filename}#{file_path_postfix}"
   end
   def page_content_url_for(filename)
     file_url_for "#{filename.gsub(%r{^/$},'/index')}.#{file_extension}"

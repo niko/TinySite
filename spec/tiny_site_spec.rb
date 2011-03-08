@@ -16,9 +16,20 @@ describe TextileParts do
 h1. header
 EOT
   end
+  describe ".image_url_for" do
+    it "delegates to the app" do
+      @app = stub(:app)
+      TextileParts.parse(@t, @app)
+      @app.should_receive(:image_url_for).with('foobar.png')
+      TextileParts.image_url_for('foobar.png')
+    end
+  end
   describe ".parse" do
+    before(:each) do
+      @app = stub(:app)
+    end
     it 'gets the variables' do
-      TextileParts.parse(@t).should == {
+      TextileParts.parse(@t, @app).should == {
         :a => 'bla',
         :e => 'ble',
         'navigation' => %Q{<ul>\n\t<li><a href="eins">one</a></li>\n\t<li><a href="zwei">two</a></li>\n</ul>},
@@ -26,26 +37,30 @@ EOT
       }
     end
     it "returns a 404 title when passed nil" do
-      TextileParts.parse(nil).should == {:title => '404 not found'}
+      TextileParts.parse(nil, @app).should == {:title => '404 not found'}
     end
   end
   describe ".textilize" do
+    before(:each) do
+      @app = stub(:app, :image_url_for => 'some/image.png')
+    end
     describe "images relative path" do
-      it "adds the images path" do
+      it "uses the images path" do
+        TextileParts.should_receive(:image_url_for).and_return('some/image.png')
         s = "bla bla !an_image.jpg! blable"
-        TextileParts.textilize(s,'images','?dl=1').should == %Q{<p>bla bla <img src="images/an_image.jpg?dl=1" alt="" /> blable</p>}
+        TextileParts.textilize(s).should == %Q{<p>bla bla <img src="some/image.png" alt="" /> blable</p>}
       end
     end
     describe "images absolute path" do
       it "leaves them alone" do
         s = "bla bla !/an_image.jpg! blable"
-        TextileParts.textilize(s,'images').should == %Q{<p>bla bla <img src="/an_image.jpg" alt="" /> blable</p>}
+        TextileParts.textilize(s).should == %Q{<p>bla bla <img src="/an_image.jpg" alt="" /> blable</p>}
       end
     end
     describe "images absolute path, domain and protocol" do
       it "leaves them alone" do
         s = "bla bla !http://foo.bar/an_image.jpg! blable"
-        TextileParts.textilize(s,'images').should == %Q{<p>bla bla <img src="http://foo.bar/an_image.jpg" alt="" /> blable</p>}
+        TextileParts.textilize(s).should == %Q{<p>bla bla <img src="http://foo.bar/an_image.jpg" alt="" /> blable</p>}
       end
     end
   end
@@ -146,7 +161,7 @@ describe TinySite do
       @app = TinySite.new :file_path => 'http://foo/bar', :image_path => 'imgs'
     end
     it "prepends the image_path" do
-      @app.should_receive(:file_url_for).with('imgs/beautyful.png').and_return('http://foo/imgs/beautyful.png')
+      @app.should_receive(:file_url_for).with('beautyful.png', 'imgs').and_return('http://foo/imgs/beautyful.png')
       @app.image_url_for('beautyful.png').should == 'http://foo/imgs/beautyful.png'
     end
   end

@@ -1,4 +1,5 @@
 require 'open-uri' 
+require 'forwardable'
 require 'RedCloth'
 require 'yaml'
 require 'haml'
@@ -68,37 +69,56 @@ class CachedHttpFile
 end
 
 class TinySite
+  class View
+    extend Forwardable
+    def_delegators :@app, :request_path, :query_string, :global, :page, :file_url_for, :image_url_for
+    
+    def initialize(app) ; @app = app ; end
+  end
+end
+
+class TinySite
+  attr_reader :file_path, :file_path_postfix, :file_extension, :image_path, :request_path, :query_string,
+              :request_path, :query_string
+  
   def initialize(opts)
     @file_path         = opts[:file_path]
     @file_path_postfix = opts[:file_path_postfix] || ''
-    @file_extension    = opts[:file_extension] || 'textile'
-    @image_path        = opts[:image_path] || File.join(@file_path, 'images')
-    @cache_buster      = opts[:cache_buster] || 'bust'
+    @file_extension    = opts[:file_extension]    || 'textile'
+    @image_path        = opts[:image_path]        || File.join(@file_path, 'images')
+    @cache_buster      = opts[:cache_buster]      || 'bust'
   end
   
-  def remote_file_url_for(filename)
-    File.join @file_path, "#{filename}.#{@file_extension}#{@file_path_postfix}"
+  def global
+          _, global_file = CachedHttpFile.get page_content_url_for('__global')
+    TextileParts.parse global_file, image_path, file_path_postfix
   end
   
-  def render
-    global_file_fetch_tread = Thread.new{
-            _, @global_file = CachedHttpFile.get remote_file_url_for('__global') } # get __global in background
-      @status, page_file    = CachedHttpFile.get remote_file_url_for(@path)
-            _, page_file    = CachedHttpFile.get remote_file_url_for(@status) if @status != 200
-    global_file_fetch_tread.join
-    
-    global = TextileParts.parse @global_file, @image_path, @file_path_postfix
-    page   = TextileParts.parse page_file,    @image_path, @file_path_postfix
-    
-    render_layout :global => global, :page => page, :env => {:path => @path, :query_string => @query_string}
+  def page
+    @status, page_file   = CachedHttpFile.get page_content_url_for(@request_path)
+          _, page_file   = CachedHttpFile.get page_content_url_for(@status)        if @status != 200
+    TextileParts.parse page_file, image_path, file_path_postfix
   end
   
-  def render_layout(params)
-    layout = params[:page][:layout] || params[:global][:layout] || 'layout'
-    
-    puts "rendering layout '#{layout}'"
-    haml = Haml::Engine.new File.open("#{layout}.haml").read, :format => :html5
-    haml.render Object.new, params
+  def status
+    @status or page && @status
+  end
+  
+  def image_url_for(img_name)
+    file_url_for File.join(@image_path, img_name)
+  end
+  def file_url_for(filename)
+    File.join file_path, "#{filename}#{file_path_postfix}"
+  end
+  def page_content_url_for(filename)
+    file_url_for "#{filename.gsub(%r{^/$},'/index')}.#{file_extension}"
+  end
+  
+  def layout
+    page[:layout] || global[:layout] || 'layout'
+  end
+  def body
+    Haml::Engine.new(File.open("#{layout}.haml").read, :format => :html5).render view
   end
   
   def caching_header
@@ -107,14 +127,15 @@ class TinySite
     CachedHttpFile.bust and return { 'Cache-Control' => 'no-cache' }
   end
   
+  def view
+    @view ||= View.new self
+  end
+  
   def call(env)
-    @path, @query_string = env['PATH_INFO'], env['QUERY_STRING']
-    @path = '/index' if @path == '/'
+    @request_path, @query_string = env['PATH_INFO'], env['QUERY_STRING']
     
-    return [301, {'Location' => @path}, ''] if @path.gsub!(/\/$/,'')
-    
-    body = render # render the body first to set @status
-    [@status, caching_header, body]
+    return [301, {'Location' => @request_path}, ''] if @request_path.gsub!(/(.)\/$/,'\\1')
+    [status, caching_header, body]
   rescue => e
     puts "#{e.class}: #{e.message} #{e.backtrace}"
     [500, {}, 'Sorry, but something went wrong']

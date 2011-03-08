@@ -83,8 +83,7 @@ class TinySite
 end
 
 class TinySite
-  attr_reader :file_path, :file_path_postfix, :file_extension, :image_path, :request_path, :query_string,
-              :request_path, :query_string
+  attr_reader :file_path, :file_path_postfix, :file_extension, :image_path, :request_path, :query_string
   
   def initialize(opts)
     @file_path         = opts[:file_path]
@@ -132,6 +131,10 @@ class TinySite
     CachedHttpFile.bust and return { 'Cache-Control' => 'no-cache' }
   end
   
+  def headers
+    caching_header.merge({'Content-Type' => 'text/html'})
+  end
+  
   def view
     @view ||= View.new self
   end
@@ -139,10 +142,11 @@ class TinySite
   def call(env)
     @request_path, @query_string = env['PATH_INFO'], env['QUERY_STRING']
     
-    return [301, {'Location' => @request_path}, ''] if @request_path.gsub!(/(.)\/$/,'\\1')
-    [status, caching_header, body]
+    return [301, {'Location' => @request_path}, ['']] if @request_path.gsub!(/(.)\/$/,'\\1')
+    
+    [status, headers, [body]]
   rescue => e
     puts "#{e.class}: #{e.message} #{e.backtrace}"
-    [500, {}, 'Sorry, but something went wrong']
+    [500, {}, ['Sorry, but something went wrong']]
   end
 end

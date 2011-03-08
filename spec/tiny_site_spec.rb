@@ -204,24 +204,33 @@ describe TinySite do
       end
     end
   end
+  describe "#headers" do
+    before(:each) do
+      @app = TinySite.new :file_path => 'http://foo/bar', :cache_buster => 'bust'
+    end
+    it "adds Content-Type to the caching header" do
+      @app.should_receive(:caching_header).and_return({'Cache-Cache' => 'pub'})
+      @app.headers.should == {'Cache-Cache' => 'pub'}.merge({'Content-Type' => 'text/html'})
+    end
+  end
   describe "#call" do
     before(:each) do
       @app = TinySite.new :file_path => 'http://foo/bar'
       @app.stub :body => 'foo'
-      @app.stub :caching_header => {'cache' => 'no cache'}
+      @app.stub :headers => {'some' => 'headers'}
       @app.instance_variable_set '@status', 123
     end
     it "sanitizes paths ending in '/' by a redirect" do
-      @app.call('PATH_INFO' => '/foo/bar/').should == [301, {'Location' => '/foo/bar'}, '']
+      @app.call('PATH_INFO' => '/foo/bar/').should == [301, {'Location' => '/foo/bar'}, ['']]
     end
     it "returns the set status and the rendered body" do
-      @app.call('PATH_INFO' => '/foo').should == [123, {'cache' => 'no cache'}, 'foo']
+      @app.call('PATH_INFO' => '/foo').should == [123, {'some' => 'headers'}, ['foo']]
     end
     it "catches errors nicely" do
       error = StandardError.new 'an_error'
       error.stub!(:backtrace => ['one'])
       @app.should_receive(:status).and_raise(error)
-      @app.call('PATH_INFO' => '/foo').should == [500, {}, 'Sorry, but something went wrong']
+      @app.call('PATH_INFO' => '/foo').should == [500, {}, ['Sorry, but something went wrong']]
     end
     it "sets request_path" do
       @app.call('PATH_INFO' => '/foo')

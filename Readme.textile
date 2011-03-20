@@ -6,4 +6,4 @@ The complete documentation is at tinysite.heroku.com, for a guide to get you sta
 
 If you like TinySite and don't have a Dropbox account already: Supporting this project by using my "affiliate link":http://db.tt/zhjQbKF would be the easiest possibility to give back. And the best part is: When you use the affiliate link not only me, but you too get 250MB extra space on Dropbox.
 
-If you want to get note of changes of the documentation please watch "the documentation app"https://github.com/niko/TinySitedocumentation_app and "the documentation files":https://github.com/niko/TinySitedocumentation_files on github.
+If you want to get note of changes of the documentation please watch "the documentation app":https://github.com/niko/TinySitedocumentation_app and "the documentation files":https://github.com/niko/TinySitedocumentation_files on github.
